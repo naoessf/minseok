@@ -20,24 +20,40 @@ dcmotor.ChangeDutyCycle(7.5)
 sleep(2)
 
 #도착지 위도 경도 입력
-위도 = input("위도를 입력하시오 : ")
-경도 = input("경도를 입력하시오 : ")
+latitude = input("위도를 입력하시오 : ")
+longitude = input("경도를 입력하시오 : ")
 #배의 현재 위치
-배의 위도
-배의 경도
-# 도착지 기준 배의 위치가 1사분면에 있을 경우
-if 배의 위도 > 위도 and 배의 경도 < 경도 :
-    차이 =  90 + m.atan((배의 위도 - 위도)/(경도 - 배의 경도))
-    svmotor.ChangeDutyCycle(7.5 + 차이*비율)
-# 도착지 기준 배의 위치가 2사분면에 있을 경우
-if 배의 경도 > 경도 and 배의 위도 > 위도 :
-    차이 = 270 - m.atan((배의 위도 - 위도)/(배의 경도 - 경도))
-    svmotor.ChangeDutyCycle(7.5 + 차이*비율)
-# 도착지 기준 배의 위치가 3사분면에 있을 경우
-if 배의 경도 > 경도 and 배의 위도 < 위도 :
-    차이 = 270 + m.atan((위도 - 배의 위도)/(배의 경도 - 경도))
-    svmotor.ChangeDutyCycle(7.5 - 차이*비율)
-# 도착지 기준 배의 위치가 4사분면에 있을 경우
-if 위도 > 배의 위도 and 경도 > 배의 경도 :
-    차이 = 90 - m.atan((위도 - 배의 위도)/(경도 - 배의 경도))
-    svmotor.ChangeDutyCycle(7.5 - 차이*비율)
+"배의 위도" = spliteddata[3]
+"배의 경도" = spliteddata[5]
+def GPSparser(data):
+	gps_data = list()
+	idx_rmc = data.find('GNRMC')
+	if data[idx_rmc:idx_rmc+5] == "GNRMC":
+		data = data[idx_rmc:]	
+		print data
+		if checksum(data):
+			spliteddata = data.split(",")
+			if spliteddata[2] == 'V':
+				print "data invalid"
+	
+			elif spliteddata[2] == 'A':
+				gps_data.append(float(spliteddata[1]))
+				if spliteddata[4] == 'N' :
+					gps_data.append(float(spliteddata[3]))
+                    dcmotor.ChangeDutyCycle(8)
+                    # 도착지 기준 배의 위치가 1사분면에 있을 경우
+                    if spliteddata[3] > latitude and spliteddata[5] < longitude :
+                        difference = 90 + m.atan((spliteddata[3] - latitude)/(longitude - spliteddata[5]))
+                        svmotor.ChangeDutyCycle(7.5 + difference)
+                    # 도착지 기준 배의 위치가 2사분면에 있을 경우
+                    if spliteddata[5] > longitude and spliteddata[3] > latitude : 
+                        difference = 270 - m.atan((spliteddata[3] - latitude)/(spliteddata[5] - longitude))    
+                        svmotor.ChangeDutyCycle(7.5 + difference)
+                    # 도착지 기준 배의 위치가 3사분면에 있을 경우
+                    if spliteddata[5] > longitude and spliteddata[3] < latitude :
+                        difference = 270 + m.atan((latitude - spliteddata[3]/spliteddata[5] - longitude))
+                        svmotor.ChangeDutyCycle(7.5 - difference)
+                    # 도착지 기준 배의 위치가 4사분면에 있을 경우
+                    if latitude > spliteddata[3] and longitude > spliteddata[5] :
+                        difference = 90 - m.atan((latitude - spliteddata[3])/(longitude - spliteddata[5]))
+                        svmotor.ChangeDutyCycle(7.5 - difference)
