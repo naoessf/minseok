@@ -14,6 +14,8 @@ GPIO.setup(LED, GPIO.OUT, initial=GPIO.LOW)
 svmotor = GPIO.PWM(11, 50)
 dcmotor = GPIO.PWM(12, 50)
 svmotor.start(0)
+
+
 dcmotor.start(0)
 svmotor.ChangeDutyCycle(7.5)
 dcmotor.ChangeDutyCycle(7.5)
