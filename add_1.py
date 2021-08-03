@@ -21,11 +21,11 @@ def svmotor():
 # SVmotor
 
 def right():
-    right = SVmotor.ChangeDutyCycle(7.5 + direction)
+    right = SVmotor.ChangeDutyCycle(6)
     return right
 
 def left():
-    left = SVmotor.ChangeDutyCycle(7.5 + direction)
+    left = SVmotor.ChangeDutyCycle(9)
     return left
 
 def straight():
@@ -33,6 +33,7 @@ def straight():
     return straight
 
 def direction():
+    ME = 0.0
     # The position of the ship in the 1st quadrant
     if position[3] > longitude(ps) and position[1] > latitude(ps) :
         difference = (270 - m.atan((position[1] - latitude(ps))/(position[3] - longitude(ps)))) - position[3]
