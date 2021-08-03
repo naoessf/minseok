@@ -33,7 +33,7 @@ def straight():
     return straight
 
 def direction():
-        # The position of the ship in the 1st quadrant
+    # The position of the ship in the 1st quadrant
     if position[3] > longitude(ps) and position[1] > latitude(ps) :
         difference = (270 - m.atan((position[1] - latitude(ps))/(position[3] - longitude(ps)))) - position[3]
         direction = difference*ME
